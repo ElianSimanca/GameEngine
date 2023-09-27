@@ -7,6 +7,8 @@ import engine.entities.Player;
 import engine.graphics.Loader;
 import engine.graphics.MasterRenderer;
 import engine.graphics.OBJLoader;
+import engine.guis.GuiRenderer;
+import engine.guis.GuiTexture;
 import engine.io.DisplayManager;
 import engine.io.Input;
 import engine.models.RawModel;
@@ -16,6 +18,7 @@ import engine.textures.ModelTexture;
 import engine.textures.TerrainTexture;
 import engine.textures.TerrainTexturePack;
 import org.lwjgl.glfw.GLFW;
+import org.lwjglx.util.vector.Vector2f;
 import org.lwjglx.util.vector.Vector3f;
 
 import java.util.ArrayList;
@@ -119,6 +122,14 @@ public class MainGameLoop {
         Player player = new Player(stanfordBunny, new Vector3f(100,0,-50),0,180,0,0.6f, input);
         Camera camera = new Camera(player,input);
 
+        List<GuiTexture> guis = new ArrayList<>();
+        GuiTexture gui = new GuiTexture(loader.loadTexture("socuwan"),new Vector2f(0.5f,0.5f), new Vector2f(0.25f,0.25f) );
+        guis.add(gui);
+        GuiTexture gui2 = new GuiTexture(loader.loadTexture("thinmatrix"),new Vector2f(0.30f,0.74f), new Vector2f(0.4f,0.4f) );
+        guis.add(gui2);
+
+        GuiRenderer guiRenderer = new GuiRenderer(loader);
+
 
         while (!displayManager.shouldClose()) {
             long now = System.nanoTime();
@@ -146,6 +157,7 @@ public class MainGameLoop {
                     renderer.processEntity(entity);
                 }
                 renderer.render(light, camera);
+                guiRenderer.render(guis);
                 displayManager.updateDisplay();
 
                 lastRenderTime = now - (elapsedRenderTime % targetFrameTime);
@@ -159,6 +171,7 @@ public class MainGameLoop {
                 lastFPSTime = now;
             }
         }
+        guiRenderer.cleanUp();
         renderer.cleanUp();
         loader.cleanUP();
         displayManager.closeDisplay();
